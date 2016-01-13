@@ -31,7 +31,10 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
 	rm -rf /var/cache/apk/* && \
  	mkdir /etc/services.d/named && \
 	echo '#!/usr/bin/execlineb -P'  >> /etc/services.d/named/run && \
-	echo 'named -c /etc/bind/named.conf -g -4 -u named'  >> /etc/services.d/named/run
+	echo 'named -c /etc/bind/named.conf -f -4 -u named'  >> /etc/services.d/named/run && \
+ 	mkdir /etc/services.d/log && \
+	echo '#!/bin/sh'  >> /etc/services.d/log/run && \
+	echo 'exec logutil-service /var/log/myapp'  >> /etc/services.d/log/run
 
 EXPOSE 53 953
 
