@@ -18,6 +18,8 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
 		bind \
 		bind-tools \
 		ca-certificates \
+		dnsmasq \
+		inotify-tools \
 		mc \
 		nano \
 		openntpd \
@@ -34,8 +36,11 @@ RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
 	echo 'named -c /etc/bind/named.conf -f -4 -u named'  >> /etc/services.d/named/run && \
  	mkdir /etc/services.d/log && \
 	echo '#!/bin/sh'  >> /etc/services.d/log/run && \
-	echo 'exec logutil-service /var/log/myapp'  >> /etc/services.d/log/run
+	echo 'exec logutil-service /var/log/named'  >> /etc/services.d/log/run && \
+	echo '/var/log/named true nobody,32768:32768 0644 2700' >> /etc/fix-attrs.d/01-named-log
 
 EXPOSE 53 953
+
+VOLUME /etc/bind
 
 ENTRYPOINT ["/init"]
